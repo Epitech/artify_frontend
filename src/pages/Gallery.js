@@ -57,7 +57,7 @@ const Gallery = ({ setOpenGallery }) => {
                     res.data.results.map(async (image) => {
                         const item = await localforage.getItem(image.id);
                         if (!item) {
-                            const b64 = await toDataURL(`${process.env.REACT_APP_API_URL}/results/${image.resultID}`);
+                            const b64 = await toDataURL(`${process.env.REACT_APP_API_URL}/results/${image.resultId}`);
                             localforage.setItem(image.id, b64);
                             tmp.push({
                                 resultUrl: b64,

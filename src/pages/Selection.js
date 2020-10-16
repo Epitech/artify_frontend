@@ -29,10 +29,11 @@ const Selection = () => {
             const res = await axios.post(`${process.env.REACT_APP_API_URL}/transfert`, {
                 photoId: global.selectedImage.id,
                 artworkId: global.selectedArtwork.id,
-            });
+            }, {timeout: 120000});
+	    //console.log(res)
             dsp({
                 type: 'SET_RESULT_IMAGE',
-                resultImage: { url: `${process.env.REACT_APP_API_URL}/results/${res.data.resultID}`, id: res.data.resultID },
+                resultImage: { url: `${process.env.REACT_APP_API_URL}/results/${res.data.resultId}`, id: res.data.resultId },
             });
         } catch (e) {
             console.log(e);
