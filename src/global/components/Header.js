@@ -21,6 +21,7 @@ const Header = ({ setOpenParams, setOpenGallery }) => {
             type: 'SET_RESULT_IMAGE',
             selectedImage: null,
         });
+        window.location.href = '/';
     };
 
     const onReturnClick = () => {
@@ -32,10 +33,11 @@ const Header = ({ setOpenParams, setOpenGallery }) => {
                 });
                 break;
             case 'RÉSULTAT':
-                dsp({
-                    type: 'SET_RESULT_IMAGE',
-                    resultImage: null,
-                });
+                // dsp({
+                //     type: 'SET_RESULT_IMAGE',
+                //     resultImage: null,
+                // });
+                setOpenGallery(true);
                 break;
             case 'SÉLÉCTION':
                 dsp({

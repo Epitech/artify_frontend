@@ -104,7 +104,6 @@ const Settings = () => {
             DYPTIQUE: 2,
             TRYPTIQUE: 3,
         };
-
         try {
             const res = await axios.put(`${process.env.REACT_APP_API_URL}/settings`, { displayValue: displayEnum[value] });
         } catch (e) {
@@ -113,6 +112,13 @@ const Settings = () => {
         dsp({
             type: 'SET_DISPLAY',
             displayValue: value,
+        });
+    };
+
+    const onCloudLocalChange = (value) => {
+        dsp({
+            type: 'SET_CLOUD_LOCAL',
+            cloudLocalValue: value,
         });
     };
 
@@ -217,6 +223,14 @@ const Settings = () => {
                         options={global.settings.printMailerOptions}
                         value={global.settings.printMailerValue}
                         onSelect={onPrintMailerChange}
+                    />
+                </Form.Field>
+                <Form.Field>
+                    <label className="form-label">CLOUD / LOCAL</label>
+                    <OptionsSelector
+                        options={global.settings.cloudLocalOptions}
+                        value={global.settings.cloudLocalValue}
+                        onSelect={onCloudLocalChange}
                     />
                 </Form.Field>
                 <Form.Field style={{ marginBottom: 10 }}>

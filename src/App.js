@@ -21,7 +21,6 @@ const App = () => {
             };
             try {
                 const res = await axios.get(`${process.env.REACT_APP_API_URL}/settings`);
-		console.log(res);
                 dsp({
                     type: 'SET_DISPLAY',
                     displayValue: displayEnum[res.data.displayValue],

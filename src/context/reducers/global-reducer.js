@@ -26,6 +26,11 @@ export default (state, action) => {
                 ...state,
                 settings: { ...state.settings, printMailerValue: action.printMailerValue },
             };
+        case 'SET_CLOUD_LOCAL':
+            return {
+                ...state,
+                settings: { ...state.settings, cloudLocalValue: action.cloudLocalValue },
+            };
         case 'SET_EVENT_NAME':
             return {
                 ...state,

@@ -3,6 +3,7 @@ import { CustomButton, ImageCard } from '../global/components';
 import { useStateValue } from '../context/StateProvider';
 import ReactToPrint, { useReactToPrint } from 'react-to-print';
 import { FlexContainer } from '../global/container';
+import axios from 'axios';
 
 class ComponentToPrint extends React.Component {
     render() {
@@ -34,6 +35,11 @@ const Result = () => {
             type: 'SET_SHARE_BY_MAIL',
             shareByMail: true,
         });
+    };
+
+    const displayOnScreen = async () => {
+        // TODO
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/display?id=${global.resultImage.id}`);
     };
 
     const handlePrint = useReactToPrint({
@@ -71,6 +77,13 @@ const Result = () => {
                         backgroundColor="black"
                         fullWidth
                         onClick={handlePrint}
+                    ></CustomButton>
+                    <CustomButton
+                        text="AFFICHER À L'ÉCRAN"
+                        textColor="white"
+                        backgroundColor="black"
+                        fullWidth
+                        onClick={async () => await displayOnScreen}
                     ></CustomButton>
                     <CustomButton
                         text="ENVOI PAR MAIL"

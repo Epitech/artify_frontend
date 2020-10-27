@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CustomButton, ImageCard } from '../global/components';
 import { useStateValue } from '../context/StateProvider';
-import { FlexContainer } from '../global/container';
+import { FlexContainer, OverlayWrapper } from '../global/container';
 import axios from 'axios';
-
-axios.defaults.timeout = 120000;
+import { Image } from 'semantic-ui-react';
 
 const Selection = () => {
     const [{ global }, dsp] = useStateValue();
+    const [openPopup, setOpenPopup] = useState(false);
 
     useEffect(() => {
         dsp({
@@ -25,23 +25,46 @@ const Selection = () => {
 
     const onTransferLaunch = async () => {
         try {
-	    //console.log(global)
             const res = await axios.post(`${process.env.REACT_APP_API_URL}/transfert`, {
                 photoId: global.selectedImage.id,
                 artworkId: global.selectedArtwork.id,
-            }, {timeout: 120000});
-	    //console.log(res)
-            dsp({
-                type: 'SET_RESULT_IMAGE',
-                resultImage: { url: `${process.env.REACT_APP_API_URL}/results/${res.data.resultId}`, id: res.data.resultId },
             });
+            setOpenPopup(true);
         } catch (e) {
             console.log(e);
         }
     };
 
+    // RETURN BUTTON FROM POPUP
     return (
         <div className="page-container">
+            {openPopup && (
+                <OverlayWrapper
+                    zIndex={2}
+                    center
+                    close={() => {
+                        setOpenPopup(null);
+                    }}
+                >
+                    <div className="card" style={{ width: '40%', backgroundColor: 'white' }}>
+                        <Image className="basic-image" src={'/transfer.jpg'} style={{ marginBottom: 20, objectFit: 'cover' }} />
+                        <div style={{ height: 80 }}>
+                            <CustomButton
+                                text="RETOUR"
+                                textColor="white"
+                                backgroundColor="black"
+                                noMargin
+                                fullWidth
+                                height={80}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    window.location.href = '/';
+                                }}
+                            ></CustomButton>
+                        </div>
+                    </div>
+                </OverlayWrapper>
+            )}
             <div className="flex-center flex-column" style={{ width: '70%' }}>
                 <div className="flex-center full-width">
                     <FlexContainer marginRight={16} width="50%">

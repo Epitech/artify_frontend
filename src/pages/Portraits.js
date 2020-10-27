@@ -45,9 +45,19 @@ const Portraits = () => {
                         if (!item) {
                             const b64 = await toDataURL(`${process.env.REACT_APP_API_URL}/artworks/${image.id}`);
                             localforage.setItem(image.id, b64);
-                            tmp.push({ url: b64, title: image.title, subtitle: image.subtitle, id: image.id });
+                            tmp.push({
+                                url: b64,
+                                title: image.title,
+                                subtitle: image.subtitle,
+                                id: image.id,
+                            });
                         } else {
-                            tmp.push({ url: item, title: image.title, subtitle: image.subtitle, id: image.id });
+                            tmp.push({
+                                url: item,
+                                title: image.title,
+                                subtitle: image.subtitle,
+                                id: image.id,
+                            });
                         }
                     }),
                 );
@@ -73,15 +83,27 @@ const Portraits = () => {
                         if (!item) {
                             const b64 = await toDataURL(`${process.env.REACT_APP_API_URL}/photos/${image.id}`);
                             localforage.setItem(image.id, b64);
-                            tmp.push({ url: b64, title: image.title, subtitle: image.subtitle, id: image.id });
+                            tmp.push({
+                                url: b64,
+                                title: image.title,
+                                subtitle: image.subtitle,
+                                id: image.id,
+                            });
                         } else {
-                            tmp.push({ url: item, title: image.title, subtitle: image.subtitle, id: image.id });
+                            tmp.push({
+                                url: item,
+                                title: image.title,
+                                subtitle: image.subtitle,
+                                id: image.id,
+                            });
                         }
                     }),
                 );
                 dsp({
                     type: 'SET_IMAGE_STORAGE',
-                    imageStorage: tmp,
+                    imageStorage: tmp.sort((x, y) => {
+                        return new Date(y.title) - new Date(x.title); // Invert substractions to revert order
+                    }),
                 });
             } catch (e) {
                 console.log(e);
@@ -89,7 +111,13 @@ const Portraits = () => {
             setLoading(false);
         };
         if (global.imageStorage.length === 0) storeAndLoadPhotos();
-    }, [global.imageStorage, dsp, global.artworkStorage]);
+
+        const interval = setInterval(() => {
+            storeAndLoadPhotos();
+            storeAndLoadArtworks();
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         const tmp = [[], [], []];
@@ -104,15 +132,20 @@ const Portraits = () => {
     const handleSelectImage = () => {
         dsp({
             type: 'SET_SELECTED_IMAGE',
-            selectedImage: { url: openOverlay.url, title: openOverlay.title, subtitle: openOverlay.subtitle, id: openOverlay.id },
+            selectedImage: {
+                url: openOverlay.url,
+                title: openOverlay.title,
+                subtitle: openOverlay.subtitle,
+                id: openOverlay.id,
+            },
         });
     };
 
     const handleDeletePhotos = async () => {
         try {
             const res = await axios.delete(`${process.env.REACT_APP_API_URL}/photos/${openOverlay.id}`);
-	    await localforage.getItem(openOverlay.id);
-	    window.location.href = "/";
+            await localforage.getItem(openOverlay.id);
+            window.location.href = '/';
         } catch (e) {
             console.log(e);
         }
@@ -125,6 +158,7 @@ const Portraits = () => {
                 <OverlayWrapper
                     zIndex={2}
                     center
+                    padded
                     close={() => {
                         setOpenOverlay(null);
                     }}

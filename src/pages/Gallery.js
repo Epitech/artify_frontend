@@ -62,27 +62,36 @@ const Gallery = ({ setOpenGallery }) => {
                             tmp.push({
                                 resultUrl: b64,
                                 id: image.id,
+                                date: 0,
+                                // besoin d'une date
                             });
                         } else {
                             tmp.push({
                                 resultUrl: item,
                                 id: image.id,
+                                date: 0,
+                                // besoin d'une date
                             });
                         }
                     }),
                 );
                 dsp({
                     type: 'SET_RESULT_STORAGE',
-                    resultStorage: tmp,
+                    resultStorage: tmp.sort((x, y) => {
+                        return new Date(y.date) - new Date(x.date); // Invert substractions to revert order
+                    }),
                 });
             } catch (e) {
                 console.log(e);
             }
             setLoading(false);
         };
-
         if (global.resultStorage.length === 0) storeAndLoadResults();
-    }, [global.resultStorage, dsp]);
+        const interval = setInterval(() => {
+            storeAndLoadResults();
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         const tmp = [[], [], []];
@@ -90,8 +99,8 @@ const Gallery = ({ setOpenGallery }) => {
         setColumns(tmp);
     }, [global.resultStorage]);
 
-    const handleSelectImage = async (e) => {
-        const ids = openOverlay.id.split('_');
+    const handleSelectImage = async (result) => {
+        const ids = result.id.split('_');
         const artworkId = ids[0];
         const photoId = ids[1];
 
@@ -104,8 +113,8 @@ const Gallery = ({ setOpenGallery }) => {
             dsp({
                 type: 'SET_GALLERY_SELECTION',
                 resultImage: {
-                    id: openOverlay.id,
-                    url: openOverlay.resultUrl,
+                    id: result.id,
+                    url: result.resultUrl,
                     // title: openOverlay.title,
                     // subtitle: openOverlay.subtitle,
                 },
@@ -134,7 +143,7 @@ const Gallery = ({ setOpenGallery }) => {
 
     return (
         <div className="page-container">
-            {openOverlay && (
+            {/* {openOverlay && (
                 <OverlayWrapper
                     zIndex={2}
                     center
@@ -151,7 +160,7 @@ const Gallery = ({ setOpenGallery }) => {
                         />
                     </div>
                 </OverlayWrapper>
-            )}
+            )} */}
             {!loading ? (
                 <>
                     <FlexContainer column width="33%" marginRight={16}>
@@ -161,7 +170,7 @@ const Gallery = ({ setOpenGallery }) => {
                                 key={image.id}
                                 url={image.resultUrl}
                                 clickable
-                                onClick={() => handleClickOnCard(image)}
+                                onClick={() => handleSelectImage(image)}
                             />
                         ))}
                     </FlexContainer>
@@ -172,7 +181,7 @@ const Gallery = ({ setOpenGallery }) => {
                                 key={image.id}
                                 url={image.resultUrl}
                                 clickable
-                                onClick={() => handleClickOnCard(image)}
+                                onClick={() => handleSelectImage(image)}
                             />
                         ))}
                     </FlexContainer>
@@ -183,7 +192,7 @@ const Gallery = ({ setOpenGallery }) => {
                                 key={image.id}
                                 url={image.resultUrl}
                                 clickable
-                                onClick={() => handleClickOnCard(image)}
+                                onClick={() => handleSelectImage(image)}
                             />
                         ))}
                     </FlexContainer>

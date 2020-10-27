@@ -26,6 +26,8 @@ export default {
             displayValue: 'SOLO',
             printMailerOptions: ['SOLO', 'DYPTIQUE', 'TRYPTIQUE'],
             printMailerValue: 'SOLO',
+            cloudLocalOptions: ['CLOUD', 'LOCAL'],
+            cloudLocalValue: 'CLOUD',
             mailerPrinter: '1',
         },
     },
