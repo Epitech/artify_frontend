@@ -24,9 +24,16 @@ const Result = () => {
     }, [dsp]);
 
     const onReturnClick = () => {
+            
+        console.log(global.selectedArtwork);
+        console.log(global.selectedImage);
+        global.selectedArtwork = null;
+        global.resultImage = null;
         dsp({
-            type: 'SET_RESULT_IMAGE',
+            type: 'SET_SELECTED_IMAGE',
             resultImage: null,
+            selectedArtwork: null,
+            selectedImage: global.selectedImage,
         });
     };
 
@@ -50,13 +57,13 @@ const Result = () => {
         <div className="page-container">
             <div className="full-width flex-center flex-column">
                 <div className="flex-center full-width">
-                    <FlexContainer marginRight={16} width="33%">
+                    <FlexContainer marginRight={16} width="22%">
                         <ImageCard url={global.selectedImage.url} noImageMargin />
                     </FlexContainer>
-                    <FlexContainer width="33%">
+                    <FlexContainer width="22%">
                         <ImageCard url={global.selectedArtwork.url} noImageMargin />
                     </FlexContainer>
-                    <FlexContainer marginLeft={16} width="33%">
+                    <FlexContainer marginLeft={16} width="22%">
                         <ReactToPrint content={() => componentRef.current} />
                         <ComponentToPrint ref={componentRef}>
                             <ImageCard url={global.resultImage.url} noImageMargin />

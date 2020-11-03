@@ -57,20 +57,22 @@ const Gallery = ({ setOpenGallery }) => {
                     res.data.results.map(async (image) => {
                         const item = await localforage.getItem(image.id);
                         if (!item) {
+                            console.log(image.id);
                             const b64 = await toDataURL(`${process.env.REACT_APP_API_URL}/results/${image.id}`);
                             localforage.setItem(image.id, b64);
                             tmp.push({
                                 resultUrl: b64,
                                 id: image.id,
-                                date: 0,
-                                // besoin d'une date
+                                title: image.title,
+                                subtitle: image.subtitle, 
                             });
                         } else {
+                            console.log(image.id);
                             tmp.push({
                                 resultUrl: item,
                                 id: image.id,
-                                date: 0,
-                                // besoin d'une date
+                                title: image.title,
+                                subtitle: image.subtitle, 
                             });
                         }
                     }),
@@ -78,7 +80,7 @@ const Gallery = ({ setOpenGallery }) => {
                 dsp({
                     type: 'SET_RESULT_STORAGE',
                     resultStorage: tmp.sort((x, y) => {
-                        return new Date(y.date) - new Date(x.date); // Invert substractions to revert order
+                        return new Date(y.title) - new Date(x.title); // Invert substractions to revert order
                     }),
                 });
             } catch (e) {
@@ -100,23 +102,27 @@ const Gallery = ({ setOpenGallery }) => {
     }, [global.resultStorage]);
 
     const handleSelectImage = async (result) => {
+        console.log(result);
         const ids = result.id.split('_');
         const artworkId = ids[0];
         const photoId = ids[1];
+        console.log(ids);
+        console.log(artworkId);
+        console.log(photoId);
 
         try {
             const photoList = await axios.get(`${process.env.REACT_APP_API_URL}/photos`);
             const artworkList = await axios.get(`${process.env.REACT_APP_API_URL}/artworks`);
-            const photo = photoList.data.find((elem) => elem.id === photoId);
-            const artwork = artworkList.data.find((elem) => elem.id === artworkId);
+            const photo = photoList.data.photos.find((elem) => elem.id === photoId);
+            const artwork = artworkList.data.artworks.find((elem) => elem.id === artworkId);
 
             dsp({
                 type: 'SET_GALLERY_SELECTION',
                 resultImage: {
                     id: result.id,
                     url: result.resultUrl,
-                    // title: openOverlay.title,
-                    // subtitle: openOverlay.subtitle,
+                    title: result.title,
+                    subtitle: result.subtitle,
                 },
                 selectedArtwork: {
                     id: artworkId,
@@ -137,7 +143,7 @@ const Gallery = ({ setOpenGallery }) => {
     };
 
     const handleClickOnCard = (image) => {
-        console.log('IMAFE = ', image);
+        console.log('IMAGE = ', image);
         setOpenOverlay(image);
     };
 
@@ -163,34 +169,37 @@ const Gallery = ({ setOpenGallery }) => {
             )} */}
             {!loading ? (
                 <>
-                    <FlexContainer column width="33%" marginRight={16}>
+                    <FlexContainer column width="22%" marginRight={16} >
                         {columns[0].map((image) => (
                             <ImageCard
-                                noImageMargin
                                 key={image.id}
                                 url={image.resultUrl}
+                                title={image.title}
+                                subtitle={image.subtitle}
                                 clickable
                                 onClick={() => handleSelectImage(image)}
                             />
                         ))}
                     </FlexContainer>
-                    <FlexContainer column width="33%">
+                    <FlexContainer column width="22%">
                         {columns[1].map((image) => (
                             <ImageCard
-                                noImageMargin
                                 key={image.id}
                                 url={image.resultUrl}
+                                title={image.title}
+                                subtitle={image.subtitle}
                                 clickable
                                 onClick={() => handleSelectImage(image)}
                             />
                         ))}
                     </FlexContainer>
-                    <FlexContainer column width="33%" marginLeft={16}>
+                    <FlexContainer column width="22%" marginLeft={16}>
                         {columns[2].map((image) => (
                             <ImageCard
-                                noImageMargin
                                 key={image.id}
                                 url={image.resultUrl}
+                                title={image.title}
+                                subtitle={image.subtitle}
                                 clickable
                                 onClick={() => handleSelectImage(image)}
                             />
